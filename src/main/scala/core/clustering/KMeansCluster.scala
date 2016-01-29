@@ -1,5 +1,6 @@
-package core
+package core.clustering
 
+import core.{DataSet, Observation}
 
 class KMeansCluster(dataSet: DataSet) {
 

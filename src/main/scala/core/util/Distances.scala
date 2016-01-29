@@ -1,8 +1,10 @@
-package core
+package core.util
 
 
 
 object Distances {
+
+  type DistanceFunc[A <: Double, B <: Double] = (Array[A], Array[B]) => Double
 
   @throws(classOf[IllegalArgumentException])
   def Euclidean[A <: Double, B <: Double](x: Array[A], y: Array[B]): Double = {
