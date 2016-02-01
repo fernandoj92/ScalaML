@@ -4,10 +4,10 @@ package core.util
 
 object Distances {
 
-  type DistanceFunc[A <: Double, B <: Double] = (Array[A], Array[B]) => Double
+  type DistanceFunc[A <% Double, B <% Double] = (Array[A], Array[B]) => Double
 
   @throws(classOf[IllegalArgumentException])
-  def Euclidean[A <: Double, B <: Double](x: Array[A], y: Array[B]): Double = {
+  def Euclidean[A <% Double, B <% Double](x: Array[A], y: Array[B]): Double = {
     require( x.length == y.length,
       s"Distance.euclidean Vectors have different size ${x.length} and ${y.length}")
 
@@ -15,7 +15,7 @@ object Distances {
   }
 
   @throws(classOf[IllegalArgumentException])
-  def Manhattan[A <: Double, B <: Double](x: Array[A], y: Array[B]): Double = {
+  def Manhattan[A <% Double, B <% Double](x: Array[A], y: Array[B]): Double = {
     require( x.length == y.length,
       s"Distance.manhattan Vectors have different size ${x.length} and ${y.length}")
 
