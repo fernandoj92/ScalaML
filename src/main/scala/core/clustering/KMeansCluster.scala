@@ -1,32 +1,33 @@
 package core.clustering
 
+import core.util.Statistics
 import core.{DataSet, Observation}
 
 import scala.collection.mutable.ListBuffer
 
 class KMeansCluster(centroid: Array[Double], dataSet: DataSet) {
 
-  val members = new ListBuffer[Int]
+  private val members = new ListBuffer[Int]
+  private lazy val stats: Statistics = generateStatistics
+
+  private def generateStatistics: Statistics = {
+    val memberValues = members.map( dataSet.data(_) ).toArray
+    new Statistics(memberValues)
+  }
 
   def += (n: Int): Unit = members.append(n)
 
-  def moveCenter: KMeansCluster = {
+  final def size: Int = members.size
+
+  final def moveCenter: KMeansCluster = {
     require( members.nonEmpty, s"Cannot move the center of an empty cluster")
 
-    // Hacemos la media de cada dimension y ese pasa a ser el nuevo centroide
-    // SUSTITUIR POR LA CREACIÓN DEL OBJETO DE STATISTICS, quizas en su constructor tiene mas sentido
-    // con el dataset creamos el objeto de estadisticas asociado
-    val memberValues = members.map( dataSet.data(_) ).toArray
-    val sums = memberValues.transpose.map(_.sum)
-    val means = sums.map( _ / members.size)
-    KMeansCluster(means,dataSet)
+    KMeansCluster(stats.means,dataSet)
   }
 
-  def standardDeviation
+  final def standardDeviation:Seq[Double] = stats.standardDeviation
 
-  // Tiene sentido definir una clase de Statistics con valores lazy, ya que solo se utilizan si se piden
-  // y como son en cascada si pedimos algo de mas abajo pues ya genera lo anterior y si solo necesitamos
-  // lo basico pues solo almacena lo basico
+
 }
 
 object KMeansCluster{
