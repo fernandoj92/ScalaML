@@ -17,6 +17,8 @@ class KMeansCluster(centroid: Array[Double], dataSet: DataSet) {
 
   def += (n: Int): Unit = members.append(n)
 
+  def getCentroid:Array[Double] = centroid
+
   final def size: Int = members.size
 
   final def moveCenter: KMeansCluster = {

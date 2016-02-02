@@ -10,7 +10,7 @@ import scala.util.{Failure, Success, Try, Random}
 case class KMeansConfig(K: Int, maxIters: Int)
 
 class KMeans (config: KMeansConfig,
-              distance: DistanceFunc,
+              distance: DistanceFunc[Double, Double],
               dataSet:DataSet) {
 
   def train: Option[KMeansModel] = Try{
@@ -43,7 +43,32 @@ class KMeans (config: KMeansConfig,
 
   }
 
-  private def assignToCluster
+  // Este método es el que define la comparación de cada instancia con los centroides
+  // y asigna la instancia al mas cercano
+  private def assignToCluster(clusters: KMeansModel): KMeansModel ={
+    // Iteramos por las instancias del dataSet
+    for(instanciaID <- dataSet.data.indices) {
+      // Iteramos por los clusters y comparamos la distancia entre el centroide del cluster y la instancia
+      for(clusterID <- clusters.indices){
+        val distancia = distance(dataSet.data(instanciaID), clusters(clusterID).getCentroid)
+      }
+    }
+    // Almacenamos el ID del cluster con la distancia minima
+
+    // Asignamos el ID de la instancia al cluster
+  }
+
+  private def getNearestCluster(clusters: KMeansModel, instance: Array[Double]): Int ={
+    /*clusters.view.zipWithIndex.foreach{
+      case (cluster, index) =>
+        val measure = distance(instance, cluster.getCentroid)
+    }*/
+    // Un enfoque interesante puede ser crear una nueva lista de tuplas con el indice y la distancia
+    // y luego ya pasamos y escogemos el minimo
+    clusters.view.zipWithIndex.foldLeft{
+      (cluster, index) =>
+    }
+  }
 
 }
 
