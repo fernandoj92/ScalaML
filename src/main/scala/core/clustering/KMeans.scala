@@ -4,6 +4,7 @@ import core.DataSet
 import core.clustering.KMeans.KMeansModel
 import core.util.Distances.DistanceFunc
 
+import scala.annotation.tailrec
 import scala.util.{Failure, Success, Try, Random}
 
 
@@ -17,57 +18,46 @@ class KMeans (config: KMeansConfig,
     require(dataSet.data.length >= config.K,
       s"K ($config.K)cannot be greater than the dataSet size (${dataSet.data.length})")
 
-    //Metodo principal de la clase, principalmente se va a encargar de generar los centroides y con ellos
-    // los clusters, utilizando las distancias
-
-    //Inicialización
+    //Initialization
     val initialModel = initialize
-    initialModel
+    val assignedModel = assignToClusters(initialModel)
+
+
 
   }match {
     case Success(clusters) => Some(clusters)
     case Failure(exception) => None
   }
 
-  // En principio los generamos aleatoriamente, luego cuando se hayan asignado todas las observaciones a un cluster u otro
-  // haremos una  recolocación
+  // Random initialization
   private def initialize: KMeansModel = {
     val indexes = collection.mutable.Set(Random.nextInt(dataSet.data.length))
     while (indexes.size < config.K)
       indexes.add(Random.nextInt(dataSet.data.length))
-    // Si transformamos al final podria darse el caso de que hayamos ignorado valores iguales (no nos interesa ignorarlos)
+    // We have to transform it at the beginning or we would ignore repeated instances
     indexes.toList.map(x => KMeansCluster(dataSet.data(x),dataSet))
   }
 
+  @tailrec
   private def iterate: KMeansModel = {
 
   }
 
-  // Este método es el que define la comparación de cada instancia con los centroides
-  // y asigna la instancia al mas cercano
-  private def assignToCluster(clusters: KMeansModel): KMeansModel ={
-    // Iteramos por las instancias del dataSet
-    for(instanciaID <- dataSet.data.indices) {
-      // Iteramos por los clusters y comparamos la distancia entre el centroide del cluster y la instancia
-      for(clusterID <- clusters.indices){
-        val distancia = distance(dataSet.data(instanciaID), clusters(clusterID).getCentroid)
-      }
+  private def assignToClusters(clusters: KMeansModel): KMeansModel ={
+    for(instance <- dataSet.data.indices){
+      val nearestCluster = getNearestCluster(clusters,dataSet.data(instance))
+      clusters(nearestCluster) += instance
     }
-    // Almacenamos el ID del cluster con la distancia minima
-
-    // Asignamos el ID de la instancia al cluster
+    clusters
   }
 
   private def getNearestCluster(clusters: KMeansModel, instance: Array[Double]): Int ={
-    /*clusters.view.zipWithIndex.foreach{
-      case (cluster, index) =>
-        val measure = distance(instance, cluster.getCentroid)
-    }*/
-    // Un enfoque interesante puede ser crear una nueva lista de tuplas con el indice y la distancia
-    // y luego ya pasamos y escogemos el minimo
-    clusters.view.zipWithIndex.foldLeft{
-      (cluster, index) =>
+    val distances = clusters.zipWithIndex.map{
+      case (cluster,index) => (distance(instance,cluster.getCentroid),index)
     }
+    val min = distances.minBy(_._1)
+    val nearestCluster = min._2
+    nearestCluster
   }
 
 }
