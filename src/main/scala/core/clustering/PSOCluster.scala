@@ -1,11 +1,11 @@
 package core.clustering
 
 import core.util.Statistics
-import core.{DataSet, Observation}
+import core.{DataSet}
 
 import scala.collection.mutable.ListBuffer
 
-class KMeansCluster(centroid: Array[Double], dataSet: DataSet) {
+class PSOCluster(centroid: Array[Double], dataSet: DataSet) {
 
   private val members = new ListBuffer[Int]
   private lazy val stats: Statistics = generateStatistics
@@ -24,7 +24,7 @@ class KMeansCluster(centroid: Array[Double], dataSet: DataSet) {
   final def moveCenter: KMeansCluster = {
     require( members.nonEmpty, s"Cannot move the center of an empty cluster")
 
-    KMeansCluster(stats.means,members,dataSet)
+    KMeansCluster(stats.means,dataSet)
   }
 
   final def standardDeviation:Seq[Double] = stats.standardDeviation
@@ -32,9 +32,7 @@ class KMeansCluster(centroid: Array[Double], dataSet: DataSet) {
 
 }
 
-object KMeansCluster{
+object PSOCluster{
   //Constructor
   def apply(centroid: Array[Double], dataSet: DataSet): KMeansCluster = new KMeansCluster(centroid,dataSet)
-  //moveCenter constructor
-  private def apply(centroid: Array[Double], members: ListBuffer[Int], dataSet: DataSet): KMeansCluster = new KMeansCluster(centroid,members, dataSet)
 }
