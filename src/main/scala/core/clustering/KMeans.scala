@@ -23,7 +23,7 @@ class KMeans (config: KMeansConfig,
 
     //Initialization
     val initialModel = initialize //Al inicializar damos valor a los centroides
-    val assignments = Array.fill(xt.size)(0) //Utilizamos un array complementario para recordar el cluster al que pertenece cada miembro
+    val assignments = Array.fill(dataSet.data.length)(0) //Utilizamos un array complementario para recordar el cluster al que pertenece cada miembro
     val assignedModel = assignToClusters(initialModel, assignments)._1 //Asignamos las instancias
     val iterations = 0
 

@@ -5,9 +5,14 @@ import core.{DataSet, Observation}
 
 import scala.collection.mutable.ListBuffer
 
-class KMeansCluster(centroid: Array[Double], dataSet: DataSet) {
+//moveCenter constructor
+class KMeansCluster private (centroid: Array[Double], members: ListBuffer[Int], dataSet: DataSet) {
 
-  private val members = new ListBuffer[Int]
+  // normal (public) constructor
+  def this(centroid: Array[Double], dataSet: DataSet) {
+    this(centroid, new ListBuffer[Int], dataSet)
+  }
+
   private lazy val stats: Statistics = generateStatistics
 
   private def generateStatistics: Statistics = {
@@ -24,7 +29,7 @@ class KMeansCluster(centroid: Array[Double], dataSet: DataSet) {
   final def moveCenter: KMeansCluster = {
     require( members.nonEmpty, s"Cannot move the center of an empty cluster")
 
-    KMeansCluster(stats.means,members,dataSet)
+    new KMeansCluster(stats.means,members,dataSet)
   }
 
   final def standardDeviation:Seq[Double] = stats.standardDeviation
@@ -33,8 +38,5 @@ class KMeansCluster(centroid: Array[Double], dataSet: DataSet) {
 }
 
 object KMeansCluster{
-  //Constructor
-  def apply(centroid: Array[Double], dataSet: DataSet): KMeansCluster = new KMeansCluster(centroid,dataSet)
-  //moveCenter constructor
-  private def apply(centroid: Array[Double], members: ListBuffer[Int], dataSet: DataSet): KMeansCluster = new KMeansCluster(centroid,members, dataSet)
+
 }

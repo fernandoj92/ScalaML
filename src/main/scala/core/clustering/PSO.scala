@@ -31,13 +31,11 @@ class PSO (config: PSOConfig,
   }
 
   def initializeSwarm: List[PSOParticle] = {
+
+    val particleConfig = PSOParticleConfig(dataSet)
     //Creamos partículas hasta el número máximo especificado
     for(i <- config.swarmSize)
       PSOParticle.initialize(dataSet)
-
-    //Seleccionamos los atributos de una instancia aleatoria del dataset y la usamos como centroide
-    //de la particula
-
 
   }
 
