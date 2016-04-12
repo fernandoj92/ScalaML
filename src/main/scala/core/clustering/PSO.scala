@@ -1,7 +1,6 @@
 package core.clustering
 
 import core.DataSet
-import core.clustering.KMeans.KMeansModel
 import core.util.Distances._
 
 import scala.util.{Failure, Success, Try}

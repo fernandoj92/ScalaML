@@ -1,12 +1,13 @@
 package core.clustering
 
 import core.DataSet
+import core.plotting.Plotting
 import core.util.Statistics
 
 import scala.collection.mutable.ListBuffer
 
 /**
-  * This class defines a cluster created using the Kmeans algorithm.
+  * This class defines a cluster created using the KMeans algorithm.
   * @param centroid the cluster's centroid.
   * @param dataSet the DataSet containing all the data instances.
   */
@@ -16,7 +17,7 @@ class KMeansCluster (centroid: Array[Double], dataSet: DataSet) {
   private lazy val stats: Statistics = generateStatistics
 
   /** The members index list of the cluster. */
-  private val members: ListBuffer[Int] = new ListBuffer[Int]()
+  private val members : ListBuffer[Int] = new ListBuffer[Int]()
 
   /**
     * Returns the standard deviation of the cluster.
@@ -29,6 +30,12 @@ class KMeansCluster (centroid: Array[Double], dataSet: DataSet) {
     * @return the number of member the cluster has.
     */
   final def size: Int = members.size
+
+  /**
+    * Returns the cluster's members.
+    * @return the cluster's members.
+    */
+  final def getMembers: ListBuffer[Int] = members
 
   /**
     * Returns the centroid of the cluster.

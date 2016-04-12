@@ -1,7 +1,7 @@
 package core.clustering
 
+import core.DataSet
 import core.util.Statistics
-import core.{DataSet}
 
 import scala.collection.mutable.ListBuffer
 
