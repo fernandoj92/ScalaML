@@ -5,7 +5,9 @@ package core.util
  */
 object Types {
 
+  /** This type simply represent a double value that has been normalized. */
   type NormalizedDouble = Double
 
-  implicit def intToDouble(n: Double): NormalizedDouble = n.toDouble
+  /** An implicit converstion from Int to Double. */
+  implicit def intToDouble(n: Int): Double = n.toDouble
 }

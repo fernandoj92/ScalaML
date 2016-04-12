@@ -16,7 +16,7 @@ case class PSOConfig(K: Int,
                      c2: Double = 2.0)
 
 class PSO (config: PSOConfig,
-           distance: DistanceFunc[Double, Double],
+           distance: DistanceFunc,
            dataSet:DataSet) {
 
   def train: Option[KMeansModel]= Try{

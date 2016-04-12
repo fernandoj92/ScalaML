@@ -24,7 +24,7 @@ class PSOCluster(centroid: Array[Double], dataSet: DataSet) {
   final def moveCenter: KMeansCluster = {
     require( members.nonEmpty, s"Cannot move the center of an empty cluster")
 
-    KMeansCluster(stats.means,dataSet)
+    new KMeansCluster(stats.means,dataSet)
   }
 
   final def standardDeviation:Seq[Double] = stats.standardDeviation
