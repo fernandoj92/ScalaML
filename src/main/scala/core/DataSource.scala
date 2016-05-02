@@ -30,7 +30,7 @@ case class DataSource(config: DataSourceConfig){
     * @return the new dataSet object.
     */
   // TODO: check if it works with lower number of headers that it should have.
-  def generateDataSet(): Try[DataSet] = Try{
+  def generateDataSet(): DataSet = {
 
     // Reads the file.
     val bufferedSource = io.Source.fromFile(config.filePath)
@@ -95,8 +95,8 @@ case class DataSource(config: DataSourceConfig){
   private def check(config: DataSourceConfig): Unit =  {
     require( !config.filePath.isEmpty,
       "DataSource.check Undefined path for data source")
-    require( config.headerLines <=0,
-      s"DataSource.check Incorrect number of header lines ${config.headerLines} for data source")
+    require( config.headerLines >=0,
+      s"DataSource.check Incorrect number of headlines in the file: ${config.headerLines} headlines in the configuration")
   }
 
 }

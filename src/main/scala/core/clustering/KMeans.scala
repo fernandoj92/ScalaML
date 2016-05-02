@@ -34,9 +34,9 @@ class KMeans (K: Int,
 
     // This array will remember the assigned cluster of each instance of the dataSet.
     // Initially all the instances belong to the first cluster.
-    val assignments = Array.fill(dataSet.data.length)(0)
+    val assignments = Array.fill(dataSet.data.length)(-1)
 
-    // Assigns each instance to a cluster.
+    // Assigns each instance to its nearest cluster.
     val assignedClusters = assignToClusters(dataSet, initialClusters, assignments)._1
 
     // Initializes current iterations.
@@ -47,7 +47,9 @@ class KMeans (K: Int,
 
   }match {
     case Success(model) => Some(model)
-    case Failure(exception) => None
+    case Failure(exception) =>
+      // TODO: Maybe log the exception?
+      None
   }
 
   /**
@@ -77,15 +79,13 @@ class KMeans (K: Int,
     * @param iters current number of iterations passed.
     * @return the updated model.
     */
-  // Es necesario modificar los metodos para poder tener en cuenta si no se han producido reasignaciones,
-  // ya que es una condición de parada
-  // Tambien es necesario mover el centroide
-  // AL SER RECURSIVO NO ES NECESARIO GUARDAR LOS CLUSTERS ya que los iremos pasando
   @tailrec
   private def iterate(dataSet: DataSet, _initialModel: KMeansModel, assignments: Array[Int], iters : Int): KMeansModel = {
 
     // The clusters' centroids are moved.
-    val result = assignToClusters(dataSet, _initialModel.getClusters.map(_.moveCenter), assignments)
+    val updatedClusters = _initialModel.getClusters.map(_.moveCenter)
+    // Instances are re-assigned
+    val result = assignToClusters(dataSet, updatedClusters, assignments)
     // The updated model.
     val newClusters = result._1
     //The number of assignments
@@ -112,7 +112,7 @@ class KMeans (K: Int,
 
     for(instanceIndex <- dataSet.data.indices) {
       val nearestCluster = getNearestCluster(clusters, dataSet.data(instanceIndex))
-      // re-assign if the observations does not belong to this nearest cluster
+      // re-assign if the observations does not belong to its nearest cluster
       if (nearestCluster != assignments(instanceIndex)){
         // Re-assign ONLY if the instance does not belong to its nearest cluster
         clusters(nearestCluster) += instanceIndex
@@ -120,7 +120,6 @@ class KMeans (K: Int,
         numberOfAssignments = numberOfAssignments + 1
       }
     }
-
     // Returns the new model and the number of assignments that have been made.
     (clusters,numberOfAssignments)
   }
@@ -137,12 +136,10 @@ class KMeans (K: Int,
     val distances = clusters.zipWithIndex.map{
       case (cluster,index) => (distance(instance,cluster.getCentroid),index)
     }
-
     // Minimum distance (nearest cluster).
     val min = distances.minBy(_._1)
     // Nearest cluster.
     val nearestCluster = min._2
-
     // Returns the nearest cluster.
     nearestCluster
   }

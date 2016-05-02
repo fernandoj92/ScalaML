@@ -23,7 +23,8 @@ class PSO (config: PSOConfig,
     // inicializamos el swarm
     // actualizamos la funcion de fitness
     // tailrecusive iteration
-
+    // TODO
+  new KMeansModel(null, null)
   }match {
     case Success(clusters) => Some(clusters)
     case Failure(exception) => None
@@ -33,9 +34,10 @@ class PSO (config: PSOConfig,
 
     val particleConfig = PSOParticleConfig(dataSet)
     //Creamos partículas hasta el número máximo especificado
-    for(i <- config.swarmSize)
-      PSOParticle.initialize(dataSet)
+    val lol = for(i <- 0 until config.swarmSize)
+      yield PSOParticle.initialize(dataSet)
 
+    lol.toList
   }
 
 }
