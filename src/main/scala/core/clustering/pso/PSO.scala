@@ -55,7 +55,7 @@ class PSO (config: PSOConfig,
         // Calculamos la distancia de cada instancia con respecto de cada centroide contenido en la particula y asignamos las instancias
         CentroidCluster.assignToClusters(dataSet, particle.getClusters, particle.getCurrentAssignments, Distances.Euclidean[Double, Double])
         // Calculamos la funcion de fitness de dicha particula
-    } yield particle.calculateFitnessValue
+    } yield particle.calculateFitnessValue(Distances.Euclidean[Double, Double])
 
     0
   }

@@ -15,10 +15,10 @@ import scala.collection.mutable.ListBuffer
 class CentroidCluster(centroid: Array[Double], dataSet: DataSet) {
 
   /** The necessary statistics of the cluster. It will only be computed when called. */
-  private lazy val stats: Statistics = generateStatistics
+  protected lazy val stats: Statistics = generateStatistics
 
   /** The members index list of the cluster. */
-  private val members : ListBuffer[Int] = new ListBuffer[Int]()
+  protected val members : ListBuffer[Int] = new ListBuffer[Int]()
 
   /**
     * Returns the standard deviation of the cluster.
@@ -73,19 +73,7 @@ class CentroidCluster(centroid: Array[Double], dataSet: DataSet) {
     *
     * @return an updated cluster with new centroid.
     */
-  final def moveCenter: CentroidCluster = {
-    require( members.nonEmpty, s"Cannot move the center of an empty cluster")
-
-    // Creates the new cluster
-    val newCluster = new CentroidCluster(stats.means,dataSet)
-
-    // TODO: Instead of assgining all of them and then reassign them, why not simply assign them only once?
-    // TODO: Some way to pass a copied version of the members list
-    this.members.foreach(newCluster.+=(_))
-
-    // Returns the new cluster.
-    newCluster
-  }
+  abstract def moveCenter: CentroidCluster
 
   /**
     * Returns the necessary statistics of the cluster.
