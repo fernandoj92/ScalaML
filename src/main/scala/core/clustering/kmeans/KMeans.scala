@@ -1,7 +1,7 @@
 package core.clustering.kmeans
 
 import core.DataSet
-import core.clustering.KMeansModel
+import core.clustering.model.{CentroidCluster, CentroidModel}
 import core.util.Distances.DistanceFunc
 
 import scala.annotation.tailrec
@@ -28,7 +28,7 @@ class KMeans (K: Int,
     * @param dataSet the dataSet that is going to be used to learn the clusters.
     * @return the model.
     */
-  def train(dataSet: DataSet): Option[KMeansModel] = Try{
+  def train(dataSet: DataSet): Option[CentroidModel] = Try{
     require(dataSet.data.length >= K,
       s"K ($K) cannot be greater than the dataSet size (${dataSet.data.length})")
 
@@ -40,13 +40,13 @@ class KMeans (K: Int,
     val assignments = Array.fill(dataSet.data.length)(-1)
 
     // Assigns each instance to its nearest cluster.
-    val assignedClusters = assignToClusters(dataSet, initialClusters, assignments)._1
+    val assignedClusters = CentroidCluster.assignToClusters(dataSet, initialClusters, assignments, distance)._1
 
     // Initializes current iterations.
     val iterations = 0
 
     // Launch the recursion
-    iterate(dataSet, new KMeansModel(assignedClusters, dataSet), assignments, iterations)
+    iterate(dataSet, new CentroidModel(assignedClusters, dataSet), assignments, iterations)
 
   }match {
     case Success(model) => Some(model)
@@ -61,7 +61,7 @@ class KMeans (K: Int,
     * @param dataSet the dataSet that is going to be used to learn the clusters.
     * @return the initialized clusters.
     */
-  private def initialize(dataSet: DataSet): List[KMeansCluster] = {
+  private def initialize(dataSet: DataSet): List[CentroidCluster] = {
     // Creates a Set that will store the index of the random instance that will be chosen as the centroid of the cluster.
     val indexes = collection.mutable.Set(Random.nextInt(dataSet.data.length))
 
@@ -73,7 +73,7 @@ class KMeans (K: Int,
     // TODO: But, shouldn't centroids be different?
 
     // It creates a new cluster for each centroid.
-    indexes.toList.map(x => new KMeansCluster(dataSet.data(x),dataSet))
+    indexes.toList.map(x => new CentroidCluster(dataSet.data(x),dataSet))
   }
 
   /**
@@ -85,12 +85,12 @@ class KMeans (K: Int,
     * @return the updated model.
     */
   @tailrec
-  private def iterate(dataSet: DataSet, _initialModel: KMeansModel, assignments: Array[Int], iters : Int): KMeansModel = {
+  private def iterate(dataSet: DataSet, _initialModel: CentroidModel, assignments: Array[Int], iters : Int): CentroidModel = {
 
     // The clusters' centroids are moved.
     val updatedClusters = _initialModel.getClusters.map(_.moveCenter)
     // Instances are re-assigned
-    val result = assignToClusters(dataSet, updatedClusters, assignments)
+    val result = CentroidCluster.assignToClusters(dataSet, updatedClusters, assignments, distance)
     // The updated model.
     val newClusters = result._1
     //The number of assignments
@@ -98,57 +98,9 @@ class KMeans (K: Int,
 
     // Stop condition of the algorithm
     if( iters >= maxIters || numberOfAssignments == 0)
-      new KMeansModel(newClusters, dataSet)
+      new CentroidModel(newClusters, dataSet)
     else
-      iterate(dataSet, new KMeansModel(newClusters, dataSet),assignments,iters + 1)
-  }
-
-  /**
-    * Private method that assigns each instance of the dataSet to it nearest cluster.
-    *
-    * @param dataSet the dataSet that is going to be used to learn the clusters.
-    * @param clusters current model.
-    * @param assignments the array containing the assigned cluster for each data instance.
-    * @return the updated model and the number of assignments that have been made.
-    */
-  // TODO: (Borrar comment???) Aqui esta reasignando sin tener en cuenta si esa instancia ya pertenecia a dicho cluster
-  private def assignToClusters(dataSet: DataSet, clusters: List[KMeansCluster], assignments: Array[Int]): (List[KMeansCluster], Int) ={
-
-    var numberOfAssignments = 0
-
-    for(instanceIndex <- dataSet.data.indices) {
-      val nearestCluster = getNearestCluster(clusters, dataSet.data(instanceIndex))
-      // re-assign if the observations does not belong to its nearest cluster
-      if (nearestCluster != assignments(instanceIndex)){
-        // Re-assign ONLY if the instance does not belong to its nearest cluster
-        clusters(nearestCluster) += instanceIndex
-        assignments(instanceIndex) = nearestCluster
-        numberOfAssignments = numberOfAssignments + 1
-      }
-    }
-    // Returns the new model and the number of assignments that have been made.
-    (clusters,numberOfAssignments)
-  }
-
-  /**
-    * Returns the nearest cluster for a data instance
-    *
-    * @param clusters current model.
-    * @param instance the data instance to be assigned.
-    * @return the nearest cluster's index.
-    */
-  private def getNearestCluster(clusters: List[KMeansCluster], instance: Array[Double]): Int ={
-
-    // All the distances to the clusters are calculated.
-    val distances = clusters.zipWithIndex.map{
-      case (cluster,index) => (distance(instance,cluster.getCentroid),index)
-    }
-    // Minimum distance (nearest cluster).
-    val min = distances.minBy(_._1)
-    // Nearest cluster.
-    val nearestCluster = min._2
-    // Returns the nearest cluster.
-    nearestCluster
+      iterate(dataSet, new CentroidModel(newClusters, dataSet),assignments,iters + 1)
   }
 
 }

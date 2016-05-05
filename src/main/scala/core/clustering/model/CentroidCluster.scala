@@ -28,6 +28,19 @@ class CentroidCluster(centroid: Array[Double], dataSet: DataSet) {
   final def standardDeviation: Array[Double] = stats.standardDeviation
 
   /**
+    * Returns the Sum distances of each instance to the centroid
+    * @return the Sum distances of each instance to the centroid
+    */
+  final def distancesSum(distanceFunc: DistanceFunc): Double = {
+    var sum = 0.0
+    for(i <- dataSet.data.indices)
+      sum = distanceFunc(dataSet.data(i), centroid)
+
+    sum
+  }
+
+
+  /**
     * Returns the number of members the cluster has.
     *
     * @return the number of members the cluster has.

@@ -1,4 +1,4 @@
-import core.clustering.KMeans
+import core.clustering.kmeans.KMeans
 import core.util.Distances
 import core.{DataSource, DataSourceConfig}
 

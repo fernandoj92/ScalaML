@@ -1,0 +1,4 @@
+Generar 2 clases Cluster que hereden de CentroidCluster y que tengan sus propios metodos
+
+- KmeansCluster: movecenter
+- PsoCluster: movecenter (El centro se mueve al sumar la antigua posicion con la velocidad actual)

@@ -7,6 +7,8 @@ package core
   */
 case class DataSet(headers:List[String], data: Array[Array[Double]]) {
 
+  def instanceSize: Int = data.head.length
+
 }
 
 // TODO: This class is not used at the moment because data rows are represented as matrix rows in the dataSet values.

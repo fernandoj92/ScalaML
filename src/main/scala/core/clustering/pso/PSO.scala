@@ -1,8 +1,8 @@
 package core.clustering.pso
 
 import core.DataSet
-import core.clustering.model.KMeansModel
-import core.clustering.{PSOParticle, PSOParticleConfig}
+import core.clustering.model.{CentroidCluster, CentroidModel}
+import core.util.Distances
 import core.util.Distances._
 
 import scala.util.{Failure, Success, Try}
@@ -20,26 +20,44 @@ class PSO (config: PSOConfig,
            distance: DistanceFunc,
            dataSet:DataSet) {
 
-  def train: Option[KMeansModel]= Try{
+  def train: Option[CentroidModel]= Try{
 
     // inicializamos el swarm
+    val initialSwarm = initializeSwarm
+
     // actualizamos la funcion de fitness
+
+
     // tailrecusive iteration
     // TODO
-  new KMeansModel(null, null)
+  new CentroidModel(null, null)
   }match {
     case Success(clusters) => Some(clusters)
     case Failure(exception) => None
   }
 
-  def initializeSwarm: List[PSOParticle] = {
+  private def initializeSwarm: List[PSOParticle] = {
 
     val particleConfig = PSOParticleConfig(dataSet)
-    //Creamos partículas hasta el número máximo especificado
-    val lol = for(i <- 0 until config.swarmSize)
-      yield PSOParticle.initialize(dataSet)
 
-    lol.toList
+    val particleSwarm = for(i <- 0 until config.swarmSize)
+      yield PSOParticle(particleConfig, dataSet, config.K)
+
+    particleSwarm.toList
+  }
+  //Se actualiza la velocidad y la posicion de cada particula teniendo en cuenta las velocidades globales y locales
+  private def updateFitnessFunction(particles: List[PSOParticle]): Double = {
+
+    // Iteramos por la lista de particulas y por cada una de ellas
+    val fitnessValues =
+      for {
+        particle <- particles
+        // Calculamos la distancia de cada instancia con respecto de cada centroide contenido en la particula y asignamos las instancias
+        CentroidCluster.assignToClusters(dataSet, particle.getClusters, particle.getCurrentAssignments, Distances.Euclidean[Double, Double])
+        // Calculamos la funcion de fitness de dicha particula
+    } yield particle.calculateFitnessValue
+
+    0
   }
 
 }
