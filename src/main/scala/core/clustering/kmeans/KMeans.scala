@@ -1,6 +1,7 @@
-package core.clustering
+package core.clustering.kmeans
 
 import core.DataSet
+import core.clustering.KMeansModel
 import core.util.Distances.DistanceFunc
 
 import scala.annotation.tailrec
@@ -9,6 +10,7 @@ import scala.util.{Failure, Random, Success, Try}
 
 /**
   * Implementation of the Kmeans algorithm.
+  *
   * @param distance  the distance function that is going to be used inside the algorithm.
   * @param K the number of clusters.
   * @param maxIters maximum number of iterations.
@@ -22,6 +24,7 @@ class KMeans (K: Int,
 
   /**
     * Trains a series of clusters (the model).
+    *
     * @param dataSet the dataSet that is going to be used to learn the clusters.
     * @return the model.
     */
@@ -54,6 +57,7 @@ class KMeans (K: Int,
 
   /**
     * Initializes the clusters values randomly.
+    *
     * @param dataSet the dataSet that is going to be used to learn the clusters.
     * @return the initialized clusters.
     */
@@ -74,6 +78,7 @@ class KMeans (K: Int,
 
   /**
     * Recursive private method that updates the centroids values and reassigns the instances to the new clusters.
+    *
     * @param _initialModel the initial value of the centroids.
     * @param assignments the array containing the cluster that each instance belongs to.
     * @param iters current number of iterations passed.
@@ -100,6 +105,7 @@ class KMeans (K: Int,
 
   /**
     * Private method that assigns each instance of the dataSet to it nearest cluster.
+    *
     * @param dataSet the dataSet that is going to be used to learn the clusters.
     * @param clusters current model.
     * @param assignments the array containing the assigned cluster for each data instance.
@@ -126,6 +132,7 @@ class KMeans (K: Int,
 
   /**
     * Returns the nearest cluster for a data instance
+    *
     * @param clusters current model.
     * @param instance the data instance to be assigned.
     * @return the nearest cluster's index.

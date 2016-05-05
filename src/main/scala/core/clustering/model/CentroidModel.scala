@@ -1,4 +1,4 @@
-package core.clustering
+package core.clustering.model
 
 import core.DataSet
 import core.plotting.Plotting
@@ -8,13 +8,13 @@ import org.jfree.data.xy.{XYSeries, XYSeriesCollection}
 /**
   * Created by Fernando on 4/12/2016.
   */
-class KMeansModel(clusters: List[KMeansCluster], dataSet: DataSet) extends Plotting{
+class CentroidModel(clusters: List[CentroidCluster], dataSet: DataSet) extends Plotting{
 
   /**
     *
     * @return
     */
-  def getClusters: List[KMeansCluster] = this.clusters
+  def getClusters: List[CentroidCluster] = this.clusters
 
   /**
     *

@@ -1,6 +1,8 @@
-package core.clustering
+package core.clustering.pso
 
 import core.DataSet
+import core.clustering.model.KMeansModel
+import core.clustering.{PSOParticle, PSOParticleConfig}
 import core.util.Distances._
 
 import scala.util.{Failure, Success, Try}

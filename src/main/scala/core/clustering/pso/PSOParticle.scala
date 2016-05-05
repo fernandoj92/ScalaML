@@ -1,4 +1,4 @@
-package core.clustering
+package core.clustering.pso
 
 import core.DataSet
 
