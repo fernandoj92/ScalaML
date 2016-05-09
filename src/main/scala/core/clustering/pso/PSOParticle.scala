@@ -3,6 +3,7 @@ package core.clustering.pso
 import java.util.concurrent.ThreadLocalRandom
 
 import core.DataSet
+import core.clustering.model.CentroidCluster
 import core.util.Distances.DistanceFunc
 
 import scala.util.Random
@@ -21,7 +22,7 @@ class PSOParticle private(config: PSOParticleConfig,
   def getClusters = position.clusters
 
   def getCurrentAssignments = position.assignments
-
+  // The lower the better, max = 0
   def calculateFitnessValue (distanceFunc: DistanceFunc): Double =
     position.clusters
       .map(x => x.distancesSum(distanceFunc) / x.size) // Cluster "score"
@@ -41,7 +42,7 @@ object PSOParticle{
     val indexes = collection.mutable.Set(Random.nextInt(dataSet.data.length))
     while (indexes.size < nClusters)
       indexes.add(Random.nextInt(dataSet.data.length))
-    val initialPosition = indexes.toList.map(x => new PSOCluster(dataSet.data(x),dataSet))
+    val initialPosition = indexes.toList.map(x => new CentroidCluster(dataSet.data(x),dataSet))
 
     // Velocity
     val velocity = for( i <- 1 to dataSet.instanceSize)
@@ -67,5 +68,5 @@ case class PSOParticleConfig(dataSet: DataSet,
 
 }
 
-private case class PositionDefinition(assignments: Array[Int], clusters: List[PSOCluster])
+private case class PositionDefinition(assignments: Array[Int], clusters: List[CentroidCluster])
 

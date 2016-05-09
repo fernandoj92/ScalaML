@@ -69,11 +69,36 @@ class CentroidCluster(centroid: Array[Double], dataSet: DataSet) {
   def +=(index: Int): Unit = members.append(index)
 
   /**
-    * Returns an updated cluster with new centroid.
     *
-    * @return an updated cluster with new centroid.
+    * @return
     */
-  abstract def moveCenter: CentroidCluster
+  def moveCenter: CentroidCluster = {
+    require( members.nonEmpty, s"Cannot move the center of an empty cluster")
+
+    // Creates the new cluster
+    val newCluster = new CentroidCluster(stats.means,dataSet)
+
+    // TODO: Instead of assgining all of them and then reassign them, why not simply assign them only once?
+    // TODO: Some way to pass a copied version of the members list
+    this.members.foreach(newCluster.+=(_))
+
+    newCluster
+  }
+
+  /**
+    *
+    * @param value
+    * @return
+    */
+  def moveCenter(value: Array[Double] ): CentroidCluster = {
+    // Sums both arrays
+    val newCentroid = centroid.flatMap(x => value.map(_ + x))
+
+    val newCluster = new CentroidCluster(newCentroid,dataSet)
+    this.members.foreach(newCluster.+=(_))
+
+    newCluster
+  }
 
   /**
     * Returns the necessary statistics of the cluster.

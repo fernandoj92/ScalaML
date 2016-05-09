@@ -57,6 +57,10 @@ class PSO (config: PSOConfig,
         // Calculamos la funcion de fitness de dicha particula
     } yield particle.calculateFitnessValue(Distances.Euclidean[Double, Double])
 
+    val bestParticleIndex = fitnessValues.zipWithIndex.minBy(_._1)._2
+
+
+
     0
   }
 

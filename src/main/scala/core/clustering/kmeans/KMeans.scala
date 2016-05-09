@@ -46,7 +46,9 @@ class KMeans (K: Int,
     val iterations = 0
 
     // Launch the recursion
-    iterate(dataSet, new CentroidModel(assignedClusters, dataSet), assignments, iterations)
+    val finalClusters = iterate(dataSet, assignedClusters, assignments, iterations)
+
+    new CentroidModel(finalClusters, dataSet)
 
   }match {
     case Success(model) => Some(model)
@@ -79,16 +81,16 @@ class KMeans (K: Int,
   /**
     * Recursive private method that updates the centroids values and reassigns the instances to the new clusters.
     *
-    * @param _initialModel the initial value of the centroids.
+    * @param _initialClusters the initial value of the centroids.
     * @param assignments the array containing the cluster that each instance belongs to.
     * @param iters current number of iterations passed.
     * @return the updated model.
     */
   @tailrec
-  private def iterate(dataSet: DataSet, _initialModel: CentroidModel, assignments: Array[Int], iters : Int): CentroidModel = {
+  private def iterate(dataSet: DataSet, _initialClusters: List[CentroidCluster], assignments: Array[Int], iters : Int): List[CentroidCluster] = {
 
     // The clusters' centroids are moved.
-    val updatedClusters = _initialModel.getClusters.map(_.moveCenter)
+    val updatedClusters = _initialClusters.map(_.moveCenter)
     // Instances are re-assigned
     val result = CentroidCluster.assignToClusters(dataSet, updatedClusters, assignments, distance)
     // The updated model.
@@ -98,9 +100,9 @@ class KMeans (K: Int,
 
     // Stop condition of the algorithm
     if( iters >= maxIters || numberOfAssignments == 0)
-      new CentroidModel(newClusters, dataSet)
+      newClusters
     else
-      iterate(dataSet, new CentroidModel(newClusters, dataSet),assignments,iters + 1)
+      iterate(dataSet, newClusters,assignments,iters + 1)
   }
 
 }
