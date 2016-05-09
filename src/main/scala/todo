@@ -3,3 +3,8 @@ Generar 2 clases Cluster que hereden de CentroidCluster y que tengan sus propios
 - KmeansCluster: movecenter
 - PsoCluster: movecenter (El centro se mueve al sumar la antigua posicion con la velocidad actual)
 El problema es como mantener ese metodo igual para ambos, (quizas no es necesario)
+
+
+El tema, es que al inicializar la particula, le damos un valor aleatorio a la velocidad y a la posicion, entonces yo creo
+que se deja asi y luego comienza la recursion, ya que de cualquiera de las formas esa primera iteracion ya ha ocurrido y
+es similar a Kmeans

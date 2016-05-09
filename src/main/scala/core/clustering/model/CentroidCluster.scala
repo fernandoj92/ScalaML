@@ -92,7 +92,7 @@ class CentroidCluster(centroid: Array[Double], dataSet: DataSet) {
     */
   def moveCenter(value: Array[Double] ): CentroidCluster = {
     // Sums both arrays
-    val newCentroid = centroid.flatMap(x => value.map(_ + x))
+    val newCentroid = centroid.zip(value).map{case (x,y) => x + y}
 
     val newCluster = new CentroidCluster(newCentroid,dataSet)
     this.members.foreach(newCluster.+=(_))

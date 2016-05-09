@@ -5,6 +5,7 @@ import core.clustering.model.{CentroidCluster, CentroidModel}
 import core.util.Distances
 import core.util.Distances._
 
+import scala.annotation.tailrec
 import scala.util.{Failure, Success, Try}
 
 
@@ -25,8 +26,15 @@ class PSO (config: PSOConfig,
     // inicializamos el swarm
     val initialSwarm = initializeSwarm
 
-    // actualizamos la funcion de fitness
+    // Asignamos las instancias a cada uno de los clusters pertenecientes a cada una de las particulas
+    for(particle <- initialSwarm)
+      CentroidCluster.assignToClusters(dataSet, particle.getClusters, particle.getCurrentAssignments, Distances.Euclidean[Double, Double])
 
+    // Calculamos las fitness functions de cada particula
+    for(particle <- initialSwarm)
+      particle.calculateFitnessValue(Distances.Euclidean[Double, Double])
+
+    // Ahora ya tendriamos las instancias asignadas, yo creo que habria que comenzar la recursión
 
     // tailrecusive iteration
     // TODO
@@ -45,6 +53,22 @@ class PSO (config: PSOConfig,
 
     particleSwarm.toList
   }
+
+  @tailrec
+  private def iterate
+/*
+  private def calculateFitnessFunction(particles: List[PSOParticle]): Seq[Double] = {
+
+    // Iteramos por la lista de particulas y por cada una de ellas
+      for {
+        particle <- particles
+        // Calculamos la distancia de cada instancia con respecto de cada centroide contenido en la particula y asignamos las instancias
+        CentroidCluster.assignToClusters(dataSet, particle.getClusters, particle.getCurrentAssignments, Distances.Euclidean[Double, Double])
+      // Calculamos la funcion de fitness de dicha particula
+      } yield particle.calculateFitnessValue(Distances.Euclidean[Double, Double])
+
+  }
+
   //Se actualiza la velocidad y la posicion de cada particula teniendo en cuenta las velocidades globales y locales
   private def updateFitnessFunction(particles: List[PSOParticle]): Double = {
 
@@ -58,10 +82,12 @@ class PSO (config: PSOConfig,
     } yield particle.calculateFitnessValue(Distances.Euclidean[Double, Double])
 
     val bestParticleIndex = fitnessValues.zipWithIndex.minBy(_._1)._2
+    val bestParticle = particles(bestParticleIndex)
 
+    particles.foreach(_.update(bestParticle.position.getValue))
 
 
     0
   }
-
+*/
 }
