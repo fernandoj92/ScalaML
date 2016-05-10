@@ -29,6 +29,7 @@ class CentroidCluster(centroid: Array[Double], dataSet: DataSet) {
 
   /**
     * Returns the Sum distances of each instance to the centroid
+    *
     * @return the Sum distances of each instance to the centroid
     */
   final def distancesSum(distanceFunc: DistanceFunc): Double = {
@@ -69,8 +70,8 @@ class CentroidCluster(centroid: Array[Double], dataSet: DataSet) {
   def +=(index: Int): Unit = members.append(index)
 
   /**
-    *
-    * @return
+    * Moves the centroid in relation to the means of its cluster members and returns a new instance of the CentroidCluster
+    * @return a new instance of the CentroidCluster
     */
   def moveCenter: CentroidCluster = {
     require( members.nonEmpty, s"Cannot move the center of an empty cluster")
@@ -86,9 +87,9 @@ class CentroidCluster(centroid: Array[Double], dataSet: DataSet) {
   }
 
   /**
-    *
-    * @param value
-    * @return
+    * Moves the centroid to a specific point and returns a new instance of the CentroidCluster
+    * @param value the new centroid's value
+    * @return a new instance of the cluster
     */
   def moveCenter(value: Array[Double] ): CentroidCluster = {
     // Sums both arrays

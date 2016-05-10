@@ -151,14 +151,14 @@ object PSOParticle{
 // Esta clase es la que se encarga automaticamente (simplemente pasandole el dataset)
 // de generar los máximos y mínimos para cada dimensión (de tal forma que la particula no se salga del plano)
 // y de asignar una velocidad máxima y minima
-case class PSOParticleConfig(dataSet: DataSet,
-                             distanceFunc: DistanceFunc,
-                             maxVel: Double = 1.0,
-                             minVel: Double = -1.0,
-                             inertiaUpperBound: Double = 1.0,
-                             inertiaLowerBound: Double = 0.0,
-                             c1: Double = 2.0,
-                             c2: Double = 2.0){
+class PSOParticleConfig(dataSet: DataSet,
+                        val distanceFunc: DistanceFunc,
+                        val maxVel: Double = 1.0,
+                        val minVel: Double = -1.0,
+                        val inertiaUpperBound: Double = 1.0,
+                        val inertiaLowerBound: Double = 0.0,
+                        val c1: Double = 2.0,
+                        val c2: Double = 2.0){
 
   final val maxPosition = dataSet.data.transpose.map(x => x.max)
   final val minPosition = dataSet.data.transpose.map(x => x.min)

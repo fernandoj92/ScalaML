@@ -9,7 +9,8 @@ import scala.util.{Failure, Success, Try}
 
 
 
-class PSO (K: Int,
+class PSO (particleConfig: PSOParticleConfig,
+           K: Int,
            maxIters: Int,
            swarmSize: Int = 10,
            distance: DistanceFunc) {
@@ -17,7 +18,7 @@ class PSO (K: Int,
   def train(dataSet: DataSet): Option[CentroidModel]= Try{
 
     // inicializamos el swarm con valores aleatorios de velocidad y posicion
-    val initialSwarm = initializeSwarm(dataSet)
+    val initialSwarm = initializeSwarm(particleConfig, dataSet)
 
     // Asignamos las instancias a cada uno de los clusters pertenecientes a cada una de las particulas
     for(particle <- initialSwarm)
@@ -39,8 +40,7 @@ class PSO (K: Int,
     case Failure(exception) => None
   }
 
-  private def initializeSwarm(dataSet: DataSet): List[PSOParticle] = {
-    val particleConfig = PSOParticleConfig(dataSet, distance)
+  private def initializeSwarm(particleConfig: PSOParticleConfig, dataSet: DataSet): List[PSOParticle] = {
     val particleSwarm = for(i <- 0 until swarmSize)
       yield PSOParticle(particleConfig, dataSet, K)
 

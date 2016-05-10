@@ -1,4 +1,4 @@
-import core.clustering.pso.PSO
+import core.clustering.pso.{PSOParticleConfig, PSO}
 import core.util.Distances
 import core.{DataSourceConfig, DataSource}
 
@@ -17,7 +17,8 @@ object PSODemoApp {
 
     println("Dataset generado")
 
-    val psoClusteringAlgorithm = new PSO(3, 10, 3, Distances.Euclidean[Double, Double])
+    val particleConfig = new PSOParticleConfig(dataSet,Distances.Euclidean[Double, Double] )
+    val psoClusteringAlgorithm = new PSO(particleConfig, 3, 10, 3, Distances.Euclidean[Double, Double])
 
     println("PSO algorithm created")
 

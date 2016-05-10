@@ -6,7 +6,7 @@ import org.jfree.chart.{ChartFrame, ChartFactory}
 import org.jfree.data.xy.{XYSeries, XYSeriesCollection}
 
 /**
-  * Created by Fernando on 4/12/2016.
+  * This class represents
   */
 class CentroidModel(clusters: List[CentroidCluster], dataSet: DataSet) extends Plotting{
 
