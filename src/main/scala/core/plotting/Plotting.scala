@@ -5,6 +5,6 @@ package core.plotting
   */
 trait Plotting {
 
-  def render2D(dimensionX: Int, dimensionY: Int)
+  def render2D(name: String, dimensionX: Int, dimensionY: Int)
 
 }

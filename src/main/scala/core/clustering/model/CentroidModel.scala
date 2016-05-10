@@ -18,10 +18,11 @@ class CentroidModel(clusters: List[CentroidCluster], dataSet: DataSet) extends P
 
   /**
     *
+    * @param name
     * @param dimensionX
     * @param dimensionY
     */
-  def render2D(dimensionX: Int, dimensionY: Int){
+  def render2D(name:String, dimensionX: Int, dimensionY: Int){
 
     // Por cada cluster creamos una serie XY
     val xyCollection = new XYSeriesCollection()
@@ -37,11 +38,19 @@ class CentroidModel(clusters: List[CentroidCluster], dataSet: DataSet) extends P
         val y = dataSet.data(index)(dimensionY)
         series.add(x,y)
       }
-
       xyCollection.addSeries(series)
     }
 
-    val chart = ChartFactory.createScatterPlot("KMeans", "Dim_"+dimensionX, "Dim_"+dimensionY, xyCollection)
+    // Ahora creamos una serie unicamente para los centroides
+    val centroidSeries = new XYSeries("Centroids")
+    for(cluster <- clusters){
+      val cX = cluster.getCentroid(dimensionX)
+      val cY = cluster.getCentroid(dimensionY)
+      centroidSeries.add(cX, cY)
+    }
+    xyCollection.addSeries(centroidSeries)
+
+    val chart = ChartFactory.createScatterPlot(name, "Dim_"+dimensionX, "Dim_"+dimensionY, xyCollection)
 
     // create and display a frame...
     val  frame = new ChartFrame("First", chart)

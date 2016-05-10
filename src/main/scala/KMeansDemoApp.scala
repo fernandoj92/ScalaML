@@ -2,7 +2,7 @@ import core.clustering.kmeans.KMeans
 import core.util.Distances
 import core.{DataSource, DataSourceConfig}
 
-object DemoApp{
+object KMeansDemoApp{
 
   def main(args: Array[String]): Unit = {
     println("DemoApp esta en marcha")
@@ -22,7 +22,7 @@ object DemoApp{
     val obtainedModel = kmeansAlgorithm.train(dataSet)
 
     obtainedModel match {
-      case Some(model) => model.render2D(0,1)
+      case Some(model) => model.render2D("KMeans",0,1)
       case None => println("There was a problem when training the model")
     }
 
