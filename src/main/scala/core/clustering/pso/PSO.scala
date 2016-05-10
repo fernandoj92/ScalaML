@@ -9,54 +9,66 @@ import scala.annotation.tailrec
 import scala.util.{Failure, Success, Try}
 
 
-case class PSOConfig(K: Int,
-                     maxIters: Int,
-                     swarmSize: Int = 10,
-                     inertiaUpperBound: Double = 1.0,
-                     inertiaLowerBound: Double = 0.0,
-                     c1: Double = 2.0,
-                     c2: Double = 2.0)
 
-class PSO (config: PSOConfig,
-           distance: DistanceFunc,
-           dataSet:DataSet) {
+class PSO (K: Int,
+           maxIters: Int,
+           swarmSize: Int = 10,
+           distance: DistanceFunc) {
 
-  def train: Option[CentroidModel]= Try{
+  def train(dataSet: DataSet): Option[CentroidModel]= Try{
 
-    // inicializamos el swarm
-    val initialSwarm = initializeSwarm
+    // inicializamos el swarm con valores aleatorios de velocidad y posicion
+    val initialSwarm = initializeSwarm(dataSet)
 
     // Asignamos las instancias a cada uno de los clusters pertenecientes a cada una de las particulas
     for(particle <- initialSwarm)
-      CentroidCluster.assignToClusters(dataSet, particle.getClusters, particle.getCurrentAssignments, Distances.Euclidean[Double, Double])
+      CentroidCluster.assignToClusters(dataSet, particle.position.clusters, particle.position.assignments, distance)
 
     // Calculamos las fitness functions de cada particula
     for(particle <- initialSwarm)
-      particle.calculateFitnessValue(Distances.Euclidean[Double, Double])
+      particle.calculateFitnessValue
 
     // Ahora ya tendriamos las instancias asignadas, yo creo que habria que comenzar la recursión
 
     // tailrecusive iteration
     // TODO
-  new CentroidModel(null, null)
+    new CentroidModel(null, null)
+
   }match {
     case Success(clusters) => Some(clusters)
     case Failure(exception) => None
   }
 
-  private def initializeSwarm: List[PSOParticle] = {
+  private def initializeSwarm(dataSet: DataSet): List[PSOParticle] = {
 
-    val particleConfig = PSOParticleConfig(dataSet)
+    val particleConfig = PSOParticleConfig(dataSet, distance)
 
-    val particleSwarm = for(i <- 0 until config.swarmSize)
-      yield PSOParticle(particleConfig, dataSet, config.K)
+    val particleSwarm = for(i <- 0 until swarmSize)
+      yield PSOParticle(particleConfig, dataSet, K)
 
     particleSwarm.toList
   }
 
-  @tailrec
-  private def iterate
-/*
+  private def iterate(dataSet: DataSet, particles: List[PSOParticle], iters: Int): List[PSOParticle] ={
+    // Iteramos por la lista de particulas y obtenemos la mejor de todas
+    val bestParticleIndex = particles.map(_.getFitnessValue).zipWithIndex.minBy(_._1)._2
+    val bestParticle = particles(bestParticleIndex)
+
+    // Actualizamos la fitness function de cada particula, junto con su velocidad y posicion
+    val newSwarm = particles.map(_.update(bestParticle.position.getValue))
+
+    // Asignamos las instancias a cada uno de los clusters pertenecientes a cada una de las particulas
+    for(particle <- newSwarm)
+      CentroidCluster.assignToClusters(dataSet, particle.position.clusters, particle.position.assignments, distance)
+
+    // Stop condition of the algorithm
+    if( iters >= maxIters)
+      null
+    null
+  }
+
+
+  /*
   private def calculateFitnessFunction(particles: List[PSOParticle]): Seq[Double] = {
 
     // Iteramos por la lista de particulas y por cada una de ellas

@@ -43,7 +43,7 @@ class KMeans (K: Int,
     val assignedClusters = CentroidCluster.assignToClusters(dataSet, initialClusters, assignments, distance)._1
 
     // Initializes current iterations.
-    val iterations = 0
+    val iterations = 1
 
     // Launch the recursion
     val finalClusters = iterate(dataSet, assignedClusters, assignments, iterations)
