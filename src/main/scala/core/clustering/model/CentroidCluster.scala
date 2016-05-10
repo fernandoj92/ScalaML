@@ -92,7 +92,7 @@ class CentroidCluster(centroid: Array[Double], dataSet: DataSet) {
     */
   def moveCenter(value: Array[Double] ): CentroidCluster = {
     // Sums both arrays
-    val newCentroid = centroid.zip(value).map{case (x,y) => x + y}
+    val newCentroid = value
 
     val newCluster = new CentroidCluster(newCentroid,dataSet)
     this.members.foreach(newCluster.+=(_))
@@ -123,7 +123,7 @@ object CentroidCluster{
     * @return the updated model and the number of assignments that have been made.
     */
   // TODO: (Borrar comment???) Aqui esta reasignando sin tener en cuenta si esa instancia ya pertenecia a dicho cluster
-  def assignToClusters(dataSet: DataSet, clusters: List[CentroidCluster], assignments: Array[Int], distanceFunc: DistanceFunc): (List[CentroidCluster], Int) ={
+  def assignToClusters(dataSet: DataSet, clusters: List[CentroidCluster], assignments: Array[Int], distanceFunc: DistanceFunc): Int ={
 
     var numberOfAssignments = 0
 
@@ -137,8 +137,8 @@ object CentroidCluster{
         numberOfAssignments = numberOfAssignments + 1
       }
     }
-    // Returns the new model and the number of assignments that have been made.
-    (clusters,numberOfAssignments)
+    // Returns the number of assignments that have been made.
+    numberOfAssignments
   }
 
   /**

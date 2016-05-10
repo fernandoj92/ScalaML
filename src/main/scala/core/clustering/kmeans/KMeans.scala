@@ -33,20 +33,20 @@ class KMeans (K: Int,
       s"K ($K) cannot be greater than the dataSet size (${dataSet.data.length})")
 
     // Initializes the model by giving value to the centroids.
-    val initialClusters = initialize(dataSet)
+    val clusters = initialize(dataSet)
 
     // This array will remember the assigned cluster of each instance of the dataSet.
     // Initially all the instances belong to the first cluster.
     val assignments = Array.fill(dataSet.data.length)(-1)
 
     // Assigns each instance to its nearest cluster.
-    val assignedClusters = CentroidCluster.assignToClusters(dataSet, initialClusters, assignments, distance)._1
+    CentroidCluster.assignToClusters(dataSet, clusters, assignments, distance)
 
     // Initializes current iterations.
     val iterations = 1
 
     // Launch the recursion
-    val finalClusters = iterate(dataSet, assignedClusters, assignments, iterations)
+    val finalClusters = iterate(dataSet, clusters, assignments, iterations)
 
     new CentroidModel(finalClusters, dataSet)
 
@@ -92,17 +92,13 @@ class KMeans (K: Int,
     // The clusters' centroids are moved.
     val updatedClusters = _initialClusters.map(_.moveCenter)
     // Instances are re-assigned
-    val result = CentroidCluster.assignToClusters(dataSet, updatedClusters, assignments, distance)
-    // The updated model.
-    val newClusters = result._1
-    //The number of assignments
-    val numberOfAssignments = result._2
+    val numberOfAssignments = CentroidCluster.assignToClusters(dataSet, updatedClusters, assignments, distance)
 
     // Stop condition of the algorithm
     if( iters >= maxIters || numberOfAssignments == 0)
-      newClusters
+      updatedClusters
     else
-      iterate(dataSet, newClusters,assignments,iters + 1)
+      iterate(dataSet, updatedClusters,assignments,iters + 1)
   }
 
 }
