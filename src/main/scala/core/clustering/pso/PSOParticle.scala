@@ -11,8 +11,8 @@ import scala.util.Random
 // Private constructor
 // Each particle position is equal to a Clustering solution
 class PSOParticle  private (config: PSOParticleConfig,
-                            val velocity: List[Array[Double]],
-                            val position: PositionDefinition) {
+                            private var velocity: List[Array[Double]],
+                            private var position: PositionDefinition) {
 
   private var inertia = 0
 
@@ -21,6 +21,10 @@ class PSOParticle  private (config: PSOParticleConfig,
   private var bestFitnessValue = Double.MaxValue
 
   private var bestPosition: List[Array[Double]] = position.getValue
+
+  def getVelocity = this.velocity
+
+  def getPosition = this.position
 
   def getFitnessValue = this.fitnessValue
 
@@ -38,7 +42,7 @@ class PSOParticle  private (config: PSOParticleConfig,
   // sobre el que multiplicar la inercia
 
   //este metodo se llamara en la parte de recursion del PSO
-  def update(globalBestPosition: List[Array[Double]]): PSOParticle = {
+  def update(globalBestPosition: List[Array[Double]]): Unit = {
 
     /** New velocity */
 
@@ -67,9 +71,11 @@ class PSOParticle  private (config: PSOParticleConfig,
     val checkedVelocity = checkVelocity(newVelocity.toList)
     val checkedCentroidValues = checkPosition(newCentroidValues.toList)
 
-    // Update the velocity and the position of the particle
-    val updatedClusters = checkedCentroidValues.flatMap(x => position.clusters.map(_.moveCenter(x)))
-    val newPosition = new PositionDefinition(position.assignments, updatedClusters)
+    /** Update the particle with its new velocity and position */
+    // Position
+    checkedCentroidValues.zip(position.clusters).map{case (newCentroid, cluster) => cluster.moveCenter(newCentroid)}
+    // Velocity
+    this.velocity = checkedVelocity
 
     // The new and best fitness values are compared
     val bestFitnessValue = this.bestFitnessValue
@@ -77,11 +83,9 @@ class PSOParticle  private (config: PSOParticleConfig,
 
     if(bestFitnessValue > newFitnessValue){
       // The Best Personal location is updated
-      this.bestPosition = newPosition.getValue
+      this.bestPosition = position.getValue
       this.bestFitnessValue = newFitnessValue
     }
-
-    new PSOParticle(this.config, checkedVelocity, newPosition)
 
   }
 
