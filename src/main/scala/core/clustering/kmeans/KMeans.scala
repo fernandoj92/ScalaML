@@ -5,7 +5,7 @@ import core.clustering.model.{CentroidCluster, CentroidModel}
 import core.util.Distances.DistanceFunc
 
 import scala.annotation.tailrec
-import scala.util.{Failure, Random, Success, Try}
+import scala.util.Random
 
 
 /**
@@ -28,7 +28,7 @@ class KMeans (K: Int,
     * @param dataSet the dataSet that is going to be used to learn the clusters.
     * @return the model.
     */
-  def train(dataSet: DataSet): Option[CentroidModel] = Try{
+  def train(dataSet: DataSet): CentroidModel ={
     require(dataSet.data.length >= K,
       s"K ($K) cannot be greater than the dataSet size (${dataSet.data.length})")
 
@@ -48,13 +48,34 @@ class KMeans (K: Int,
     // Launch the recursion
     val finalClusters = iterate(dataSet, clusters, assignments, iterations)
 
-    new CentroidModel(finalClusters, dataSet)
+    new CentroidModel(finalClusters, assignments, dataSet)
 
-  }match {
-    case Success(model) => Some(model)
-    case Failure(exception) =>
-      // TODO: Maybe log the exception?
-      None
+  }
+
+  /**
+    *
+    * @param model
+    * @param dataSet
+    * @return
+    */
+  def train(model: CentroidModel, dataSet: DataSet): CentroidModel ={
+    require(dataSet.data.length >= K,
+      s"K ($K) cannot be greater than the dataSet size (${dataSet.data.length})")
+
+    // Initial clusters
+    val clusters = model.getClusters
+
+    // Initial assignments
+    val assignments = model.getAssignments
+
+    // Initializes current iterations.
+    val iterations = 1
+
+    // Launch the recursion
+    val finalClusters = iterate(dataSet, clusters, assignments, iterations)
+
+    new CentroidModel(finalClusters, assignments, dataSet)
+
   }
 
   /**
@@ -100,11 +121,6 @@ class KMeans (K: Int,
     else
       iterate(dataSet, updatedClusters,assignments,iters + 1)
   }
-
-}
-
-object KMeans{
-
 
 }
 

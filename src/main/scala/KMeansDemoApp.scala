@@ -21,12 +21,6 @@ object KMeansDemoApp{
     // http://stackoverflow.com/questions/25593567/scala-throw-error-vs-return-try
     val obtainedModel = kmeansAlgorithm.train(dataSet)
 
-    obtainedModel match {
-      case Some(model) => model.render2D("KMeans",0,1)
-      case None => println("There was a problem when training the model")
-    }
-
-
-
+    obtainedModel.render2D("KMeans",0,1)
   }
 }

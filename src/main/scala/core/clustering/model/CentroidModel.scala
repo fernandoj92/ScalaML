@@ -2,19 +2,27 @@ package core.clustering.model
 
 import core.DataSet
 import core.plotting.Plotting
-import org.jfree.chart.{ChartFrame, ChartFactory}
+import org.jfree.chart.{ChartFactory, ChartFrame}
 import org.jfree.data.xy.{XYSeries, XYSeriesCollection}
 
 /**
   * This class represents
   */
-class CentroidModel(clusters: List[CentroidCluster], dataSet: DataSet) extends Plotting{
+class CentroidModel(clusters: List[CentroidCluster],
+                    assignments :Array[Int],
+                    dataSet: DataSet) extends Plotting{
 
   /**
     *
     * @return
     */
   def getClusters: List[CentroidCluster] = this.clusters
+
+  /**
+    *
+    * @return
+    */
+  def getAssignments : Array[Int] = this.assignments
 
   /**
     *

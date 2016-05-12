@@ -5,7 +5,6 @@ import core.clustering.model.{CentroidCluster, CentroidModel}
 import core.util.Distances._
 
 import scala.annotation.tailrec
-import scala.util.{Failure, Success, Try}
 
 
 
@@ -15,8 +14,9 @@ class PSO (particleConfig: PSOParticleConfig,
            swarmSize: Int = 10,
            distance: DistanceFunc) {
 
-  def train(dataSet: DataSet): Option[CentroidModel]= Try{
-
+  def train(dataSet: DataSet): CentroidModel ={
+    require(dataSet.data.length >= K,
+      s"K ($K) cannot be greater than the dataSet size (${dataSet.data.length})")
     // inicializamos el swarm con valores aleatorios de velocidad y posicion
     val initialSwarm = initializeSwarm(particleConfig, dataSet)
 
@@ -33,11 +33,8 @@ class PSO (particleConfig: PSOParticleConfig,
 
     val bestClusters = iterate(dataSet, initialSwarm, iterations)
 
-    new CentroidModel(bestClusters, dataSet)
+    new CentroidModel(bestClusters._1,bestClusters._2, dataSet)
 
-  }match {
-    case Success(clusters) => Some(clusters)
-    case Failure(exception) => None
   }
 
   private def initializeSwarm(particleConfig: PSOParticleConfig, dataSet: DataSet): List[PSOParticle] = {
@@ -48,7 +45,7 @@ class PSO (particleConfig: PSOParticleConfig,
   }
 
   @tailrec
-  private def iterate(dataSet: DataSet, particles: List[PSOParticle], iters: Int): List[CentroidCluster] ={
+  private def iterate(dataSet: DataSet, particles: List[PSOParticle], iters: Int): (List[CentroidCluster], Array[Int]) ={
     // Iteramos por la lista de particulas y obtenemos la mejor de todas
     val bestParticleIndex = particles.map(_.getFitnessValue).zipWithIndex.minBy(_._1)._2
     val bestParticle = particles(bestParticleIndex)
@@ -65,7 +62,8 @@ class PSO (particleConfig: PSOParticleConfig,
       // The best particle's clusters are returned
       val bestParticleIndex = particles.map(_.getFitnessValue).zipWithIndex.minBy(_._1)._2
       val bestParticle = particles(bestParticleIndex)
-      bestParticle.getPosition.clusters
+      // The cluster and the array containing current assignments are returned
+      (bestParticle.getPosition.clusters, bestParticle.getPosition.assignments)
     }else
       iterate(dataSet, particles, iters + 1)
   }
