@@ -35,7 +35,7 @@ class CentroidCluster(centroid: Array[Double], dataSet: DataSet) {
   final def distancesSum(distanceFunc: DistanceFunc): Double = {
     var sum = 0.0
     for(i <- dataSet.data.indices)
-      sum = distanceFunc(dataSet.data(i), centroid)
+      sum += distanceFunc(dataSet.data(i), centroid)
 
     sum
   }

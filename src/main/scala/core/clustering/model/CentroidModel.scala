@@ -2,6 +2,7 @@ package core.clustering.model
 
 import core.DataSet
 import core.plotting.Plotting
+import core.util.Distances.DistanceFunc
 import org.jfree.chart.{ChartFactory, ChartFrame}
 import org.jfree.data.xy.{XYSeries, XYSeriesCollection}
 
@@ -23,6 +24,24 @@ class CentroidModel(clusters: List[CentroidCluster],
     * @return
     */
   def getAssignments : Array[Int] = this.assignments
+
+  def evaluateInterClusterDistances(distanceFunc: DistanceFunc): Double ={
+    val visited = new Array[Boolean](clusters.size)
+    var distanceSum = 0.0
+
+    for(i <- clusters.indices)
+      if(!visited(i))
+        for(j <-clusters.indices)
+          if(i!=j && !visited(j))
+            distanceSum += distanceFunc(clusters(i).getCentroid, clusters(j).getCentroid)
+
+    distanceSum/clusters.size
+  }
+
+  def evaluateIntraClusterDistances(distanceFunc: DistanceFunc): Double ={
+    val distanceSum = clusters.map(x => x.distancesSum(distanceFunc)).sum
+    distanceSum/dataSet.data.size
+  }
 
   /**
     *
@@ -65,5 +84,4 @@ class CentroidModel(clusters: List[CentroidCluster],
     frame.pack()
     frame.setVisible(true)
   }
-
 }
